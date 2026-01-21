@@ -3,26 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>政党マッチングシミュレーター</title>
+<title>2026衆院選 政策熱力学シミュレーター</title>
 
-<!-- PyScript (Latest Stable) -->
-<link rel="stylesheet" href="https://pyscript.net/releases/2023.05.1/pyscript.css" />
-<script defer src="https://pyscript.net/releases/2023.05.1/pyscript.js"></script>
+<!-- Chart.js & Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<py-config>
-    packages = ["matplotlib", "pandas", "numpy"]
-</py-config>
-
 <style>
-    body { background-color: #f8f9fa; font-family: "Helvetica Neue", Arial, sans-serif; }
-    .header-area { background: #2c3e50; color: white; padding: 15px 0; margin-bottom: 20px; }
-    .simulator-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-    .result-box { background: #e9ecef; color: #2c3e50; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 5px solid #3498db; }
-    .param-label { font-weight: bold; color: #555; font-size: 0.9rem; }
-    #plot-area { width: 100%; min-height: 350px; text-align: center; }
-    .btn-about { border: 1px solid white; color: white; font-size: 0.8rem; }
+    body { background-color: #f0f2f5; font-family: "Helvetica Neue", Arial, sans-serif; }
+    .header-area { background: #1a237e; color: white; padding: 20px 0; margin-bottom: 25px; border-bottom: 4px solid #f1c40f; }
+    .simulator-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 20px; transition: transform 0.2s; }
+    .result-box { background: #e8f5e9; color: #2e7d32; padding: 20px; border-radius: 8px; margin-top: 15px; border-left: 5px solid #2ecc71; }
+    .param-label { font-weight: bold; color: #444; font-size: 0.95rem; }
+    #plot-area { width: 100%; min-height: 350px; }
+    .btn-about { border: 1px solid white; color: white; font-size: 0.85rem; }
+    .party-tag { font-size: 0.8em; padding: 3px 8px; border-radius: 4px; color: white; margin-right: 5px; display: inline-block; }
+    
+    /* 政党カラー */
+    .bg-jimin { background-color: #d32f2f; } /* 自民・維新 */
+    .bg-rikken { background-color: #1976d2; } /* 中道改革 */
+    .bg-kokumin { background-color: #fbc02d; color: black; } /* 国民民主 */
+    .bg-mirai { background-color: #8e44ad; } /* チームみらい */
+    .bg-kyosan { background-color: #880e4f; } /* 共産・れいわ */
 </style>
 </head>
 <body>
@@ -30,7 +33,10 @@
 <!-- Header -->
 <div class="header-area">
     <div class="container d-flex justify-content-between align-items-center">
-        <h5 class="m-0">🗳️ 政党マッチングシミュレーター</h5>
+        <div>
+            <h4 class="m-0 fw-bold">🗳️ 2026衆院選 政策熱力学シミュレーター</h4>
+            <small class="opacity-75">物理法則で未来を予測する</small>
+        </div>
         <button class="btn btn-sm btn-about" data-bs-toggle="modal" data-bs-target="#aboutModal">
             ⓘ 解説
         </button>
@@ -40,74 +46,96 @@
 <div class="container">
     <div class="row">
         <!-- Input Panel -->
-        <div class="col-lg-4 mb-3">
+        <div class="col-lg-5 mb-3">
             <div class="simulator-card">
-                <h6 class="mb-3 border-bottom pb-2">🎛️ 1. 政策を設定する</h6>
+                <h6 class="mb-4 border-bottom pb-2 fw-bold">🎛️ あなたが望む日本の設計図</h6>
                 
-                <div class="mb-3">
-                    <label class="param-label">消費税率</label>
-                    <input type="range" class="form-range" id="tax_rate" min="0" max="25" value="10" oninput="update_val('val_tax', this.value)">
-                    <div class="d-flex justify-content-between small">
-                        <span class="text-muted">0%</span>
-                        <span id="val_tax" class="fw-bold text-primary">10%</span>
-                        <span class="text-muted">25%</span>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="param-label">公共事業費 (年額)</label>
-                    <input type="range" class="form-range" id="public_inv" min="2" max="20" value="6" oninput="update_val('val_inv', this.value)">
-                    <div class="d-flex justify-content-between small">
-                        <span class="text-muted">2兆</span>
-                        <span id="val_inv" class="fw-bold text-primary">6兆円</span>
-                        <span class="text-muted">20兆</span>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="param-label">社会保険料負担 (労使計)</label>
-                    <input type="range" class="form-range" id="social_sec" min="20" max="40" value="30" oninput="update_val('val_sec', this.value)">
-                    <div class="d-flex justify-content-between small">
-                        <span class="text-muted">20%</span>
-                        <span id="val_sec" class="fw-bold text-primary">30%</span>
-                        <span class="text-muted">40%</span>
-                    </div>
-                </div>
-
+                <!-- 消費税 -->
                 <div class="mb-4">
-                    <label class="param-label">金利政策</label>
-                    <input type="range" class="form-range" id="interest" min="-0.1" max="5.0" step="0.1" value="0.25" oninput="update_val('val_int', this.value)">
-                    <div class="d-flex justify-content-between small">
-                        <span class="text-muted">緩和</span>
-                        <span id="val_int" class="fw-bold text-primary">0.25%</span>
-                        <span class="text-muted">引締</span>
+                    <label class="param-label">消費税率</label>
+                    <input type="range" class="form-range" id="tax_rate" min="0" max="15" value="10" step="1" oninput="updateVal('val_tax', this.value, '%')">
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span>廃止 (0%)</span>
+                        <span id="val_tax" class="fw-bold text-primary fs-5">10%</span>
+                        <span>増税 (15%)</span>
                     </div>
                 </div>
 
-                <button id="run_btn" class="btn btn-secondary w-100 fw-bold shadow-sm" disabled>
-                    システム準備中...
+                <!-- 財政出動 -->
+                <div class="mb-4">
+                    <label class="param-label">財政出動の規模と質</label>
+                    <input type="range" class="form-range" id="fiscal_spend" min="0" max="3" value="1" step="1" oninput="updateFiscalLabel(this.value)">
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span>緊縮・維持</span>
+                        <span id="val_fiscal" class="fw-bold text-primary">現状維持</span>
+                        <span>超積極</span>
+                    </div>
+                    <small id="fiscal_desc" class="d-block mt-1 text-secondary" style="font-size:0.8em">バランス重視の予算配分</small>
+                </div>
+
+                <!-- 社会保障・壁 -->
+                <div class="mb-4">
+                    <label class="param-label">社会保障と「年収の壁」</label>
+                    <select class="form-select form-select-sm" id="social_wall">
+                        <option value="keep">現状維持 (103万円の壁あり)</option>
+                        <option value="reform_mid">給付付き税額控除 (低所得者支援)</option>
+                        <option value="reform_high">壁の撤廃 (基礎控除178万円へ)</option>
+                        <option value="system_opt">システム最適化 (なめらかな負担増)</option>
+                    </select>
+                </div>
+
+                <!-- 防衛・外交 -->
+                <div class="mb-4">
+                    <label class="param-label">防衛・外交スタンス</label>
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="defense" id="def_peace" value="peace">
+                        <label class="btn btn-outline-secondary btn-sm" for="def_peace">対話・軍縮</label>
+
+                        <input type="radio" class="btn-check" name="defense" id="def_status" value="status" checked>
+                        <label class="btn btn-outline-secondary btn-sm" for="def_status">専守防衛</label>
+
+                        <input type="radio" class="btn-check" name="defense" id="def_strong" value="strong">
+                        <label class="btn btn-outline-secondary btn-sm" for="def_strong">防衛力強化</label>
+                    </div>
+                </div>
+
+                <!-- エネルギー -->
+                <div class="mb-4">
+                    <label class="param-label">エネルギー政策</label>
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="energy" id="ene_renew" value="renew">
+                        <label class="btn btn-outline-secondary btn-sm" for="ene_renew">再エネ/脱原発</label>
+
+                        <input type="radio" class="btn-check" name="energy" id="ene_mix" value="mix" checked>
+                        <label class="btn btn-outline-secondary btn-sm" for="ene_mix">現実路線(原発)</label>
+                        
+                        <input type="radio" class="btn-check" name="energy" id="ene_tech" value="tech">
+                        <label class="btn btn-outline-secondary btn-sm" for="ene_tech">技術投資(核融合等)</label>
+                    </div>
+                </div>
+
+                <button onclick="runSimulation()" class="btn btn-primary w-100 fw-bold shadow-sm py-2">
+                    シミュレーション実行 🚀
                 </button>
             </div>
         </div>
 
         <!-- Result Panel -->
-        <div class="col-lg-8">
+        <div class="col-lg-7">
             <div class="simulator-card">
-                <h6 class="mb-3 border-bottom pb-2">📊 2. 5年後の日本経済予測</h6>
-                <div id="plot-area">
-                    <div class="d-flex align-items-center justify-content-center h-100 text-muted bg-light rounded" style="min-height:300px;">
-                        <small>ここにシミュレーション結果のグラフが表示されます</small>
-                    </div>
+                <h6 class="mb-3 border-bottom pb-2 fw-bold">📊 5年後の日本経済予測 (SBCM分析)</h6>
+                <div id="chart-container" style="position: relative; height:300px;">
+                    <canvas id="resultChart"></canvas>
                 </div>
                 
                 <div id="result-text" class="result-box">
-                    <strong>👈 上記のパネルで政策を選んでください。</strong><br>
-                    あなたの選択が、過去のどの政権に近いか、そして5年後の私たちの生活（手取り・インフレ率）がどうなるかを即座に計算します。
+                    <strong>👈 左のパネルで政策を選んでください。</strong><br>
+                    あなたの選択がどの政党の公約に近いか、そしてそれが物理的（熱力学的）に日本経済にどのような影響を与えるかを計算します。
                 </div>
-
-                <div class="mt-4 text-center">
-                    <a id="twitter-share" href="#" target="_blank" class="btn btn-dark disabled rounded-pill px-4 w-100">
-                        結果をポストする
+                
+                <div class="mt-3 text-end">
+                     <a id="twitter-share" href="#" target="_blank" class="btn btn-sm btn-dark disabled">
+                        Twitterで結果をシェア
                     </a>
                 </div>
             </div>
@@ -120,176 +148,244 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">このシミュレーターについて</h5>
+                <h5 class="modal-title">SBCM理論について</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <p>このツールは、単なるキーワードのマッチングではなく、経済物理学モデルを用いて政策の影響を定量的に計算するシミュレーターです。</p>
-                <hr>
-                <h6>🧪 基礎理論</h6>
-                <p><strong>Standard Block Comparison Method (SBCM)</strong></p>
-                <p class="small text-muted">
-                    従来の経済学ではなく、熱力学や流体力学の法則を統治機構に応用した「統治工学（Governance Engineering）」に基づいています。
-                </p>
-                <a href="https://github.com/SBCM-Alliance" target="_blank" class="btn btn-outline-dark btn-sm w-100">
-                    GitHub: SBCM-Alliance
-                </a>
+            <div class="modal-body small">
+                <p>このシミュレーターは、<strong>「SBCM（標準ブロック比較法）」</strong>という統治工学理論に基づいています。</p>
+                <p>政策を「思想」ではなく、以下の物理パラメータとして扱います。</p>
+                <ul>
+                    <li><strong>入力 (Input):</strong> 予算や税制（エネルギー注入）</li>
+                    <li><strong>効率 (Efficiency):</strong> システムの歪みや中抜き（熱損失）</li>
+                    <li><strong>出力 (Output):</strong> 実質手取りやインフレ率（仕事量）</li>
+                </ul>
+                <p>「聞こえの良い政策」が必ずしも「良い結果」を生まないことを、物理法則（痛みの保存則、漏出の定理）を用いて可視化します。</p>
+                <a href="https://github.com/SBCM-Alliance" target="_blank">GitHub: SBCM-Alliance</a>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function update_val(id, val) {
-        let suffix = '%';
-        if(id === 'val_inv') suffix = '兆円';
+    let myChart = null;
+
+    function updateVal(id, val, suffix) {
         document.getElementById(id).innerText = val + suffix;
     }
-</script>
 
-<!-- Python Code -->
-<py-script>
-import matplotlib.pyplot as plt
-import numpy as np
-from js import document, window
-from pyodide.ffi import create_proxy
-
-def run_simulation(event):
-    # 1. 入力取得
-    try:
-        tax_rate = float(document.getElementById("tax_rate").value)
-        public_inv = float(document.getElementById("public_inv").value)
-        social_sec = float(document.getElementById("social_sec").value)
-        interest = float(document.getElementById("interest").value)
-    except:
-        return
-
-    # 2. 物理計算エンジン (SBCM Logic)
-    base_income = 450 
-    
-    # 痛みの保存則
-    income_delta = - (tax_rate - 10) * 0.8 - (social_sec - 30) * 0.9
-    
-    # 漏出の定理
-    threshold = 6.0
-    if public_inv <= threshold:
-        inv_efficiency = 1.0
-        distortion_score = 1.0
-    else:
-        inv_efficiency = 1.0 / ((public_inv - threshold) * 0.5 + 1)
-        distortion_score = 1.0 + (public_inv - threshold) * 0.3
-
-    gdp_boost = (public_inv - 6) * inv_efficiency * 0.5
-    
-    # インピーダンス不整合
-    inf_suppression = interest * 0.6
-    mortgage_impact = interest * 1.5 
-    
-    # 結果算出
-    final_income = base_income * (1 + income_delta / 100) - (mortgage_impact * 5)
-    final_inflation = 2.0 + gdp_boost * 0.3 - inf_suppression
-    
-    # 歴史的マッチング
-    history = {
-        "橋本行革 (1997)": [5, 8, 20, 0.5],
-        "小泉改革 (2005)": [5, 5, 22, 0.1],
-        "民主党政権 (2009)": [5, 4, 24, 0.1],
-        "アベノミクス (2013)": [8, 10, 26, 0.0],
-        "岸田政権 (2024)": [10, 6, 30, 0.25]
+    function updateFiscalLabel(val) {
+        const labels = ["緊縮・維持", "バランス型", "積極財政", "異次元緩和"];
+        const descs = [
+            "現状維持。財政規律を重視。",
+            "必要な分野に絞って投資。",
+            "国債発行で成長分野へ投資。",
+            "給付金や公共事業を大量投入。"
+        ];
+        document.getElementById("val_fiscal").innerText = labels[val];
+        document.getElementById("fiscal_desc").innerText = descs[val];
     }
-    
-    current = np.array([tax_rate, public_inv, social_sec, interest])
-    best_match = "未知の領域"
-    min_dist = 9999
-    
-    for name, params in history.items():
-        dist = np.linalg.norm(current - np.array(params))
-        if dist < min_dist:
-            min_dist = dist
-            best_match = name
-            
-    # 特殊判定
-    special_tag = ""
-    if tax_rate <= 5 and social_sec <= 28:
-        best_match = "国民民主党案 (高圧経済)"
-        special_tag = "【判定：手取り最大化】"
-    if tax_rate >= 15 and public_inv >= 10:
-        best_match = "財政破綻シナリオ"
-        special_tag = "【判定：熱的死 (Heat Death)】"
 
-    # 3. グラフ描画
-    plt.clf()
-    fig, ax = plt.subplots(figsize=(6, 4))
-    plt.subplots_adjust(bottom=0.15)
-    
-    labels = ['Income', 'Inflation', 'Inefficiency']
-    val_income = 100 + (final_income - base_income)/base_income * 100
-    val_inf = 100 + (final_inflation - 2) * 10
-    val_dist = 100 + (distortion_score - 1) * 50
-    
-    values = [val_income, val_inf, val_dist]
-    colors = ['#2ecc71', '#e74c3c', '#95a5a6']
-    
-    ax.bar(labels, values, color=colors, alpha=0.8)
-    ax.axhline(100, color='black', linestyle='--', linewidth=1)
-    ax.set_ylim(50, 160)
-    ax.set_title(f"Simulation Result", fontsize=12)
-    ax.set_yticks([])
-    
-    # 値の表示
-    ax.text(0, val_income + 2, f"{int(final_income)}0k", ha='center', fontweight='bold', fontsize=10)
-    ax.text(1, val_inf + 2, f"{round(final_inflation, 1)}%", ha='center', fontweight='bold', fontsize=10)
-    ax.text(2, val_dist + 2, f"x{round(distortion_score, 1)}", ha='center', fontweight='bold', fontsize=10)
-    
-    display(fig, target="plot-area", append=False)
-    
-    # 4. 結果テキスト生成
-    diff = int(final_income - base_income)
-    diff_sign = "+" if diff > 0 else ""
-    
-    res_html = f"<h6>診断：あなたの政策は『{best_match}』です</h6>"
-    res_html += f"<p class='mb-2 text-danger fw-bold small'>{special_tag}</p>"
-    res_html += f"<ul class='small mb-2'>"
-    res_html += f"<li>手取り: 約{int(final_income)}万円 <span class='text-primary'>({diff_sign}{diff}万円)</span></li>"
-    res_html += f"<li>インフレ: {round(final_inflation, 1)}%</li>"
-    res_html += f"<li>行政歪み: {round(distortion_score, 1)}倍</li>"
-    res_html += f"</ul>"
-    
-    comment = "<div class='small mt-2'><strong>🤖 分析:</strong><br>"
-    if distortion_score > 1.3:
-        comment += "公共事業過多。地方から都心へ資金が流出中。"
-    elif final_income < 400:
-        comment += "国民負担過多。経済活動が停止する恐れがあります。"
-    elif best_match == "国民民主党案 (高圧経済)":
-        comment += "手取り重視の積極財政。供給制約対策が鍵です。"
-    else:
-        comment += "バランス型ですが、大きな成長は見込めません。"
-    comment += "</div>"
+    function runSimulation() {
+        // 1. パラメータ取得
+        const taxRate = parseFloat(document.getElementById("tax_rate").value);
+        const fiscalLvl = parseInt(document.getElementById("fiscal_spend").value); // 0-3
+        const socialWall = document.getElementById("social_wall").value;
+        const defense = document.querySelector('input[name="defense"]:checked').value;
+        const energy = document.querySelector('input[name="energy"]:checked').value;
+
+        // 2. 物理計算エンジン (SBCM Logic)
+        // 基準値 (2025年想定)
+        const baseIncome = 460; // 万円
+        const baseInflation = 1.5; // %
         
-    document.getElementById("result-text").innerHTML = res_html + comment
-    
-    # 5. Twitterボタン更新
-    tweet_body = f"私の政策マッチング結果：\\n【{best_match}】\\n💰手取り：{int(final_income)}万円 ({diff_sign}{diff})\\n📈インフレ：{round(final_inflation, 1)}%\\n\\n物理法則に基づくシミュレーション #政党マッチングシミュレーター"
-    url = f"https://twitter.com/intent/tweet?text={window.encodeURIComponent(tweet_body)}"
-    
-    btn = document.getElementById("twitter-share")
-    btn.setAttribute("href", url)
-    btn.classList.remove("disabled", "btn-dark")
-    btn.classList.add("btn-primary")
+        let incomeScore = 0; // 手取り変化
+        let inflationScore = 0; // インフレ圧力
+        let distortionScore = 1.0; // 行政の歪み（1.0が基準、高いほど無駄が多い）
+        let futureBurden = 0; // 将来世代へのツケ
 
-# 初期化処理：Pythonの読み込み完了後にボタンを有効化
-def main():
-    btn = document.getElementById("run_btn")
-    btn.innerText = "未来をシミュレーションする 🚀"
-    btn.classList.remove("btn-secondary")
-    btn.classList.add("btn-primary")
-    btn.disabled = False
-    
-    run_proxy = create_proxy(run_simulation)
-    btn.addEventListener("click", run_proxy)
+        // A. 税制の影響 (痛みの保存則)
+        // 消費税減税は手取り増だが、財源不足なら将来負担増かインフレ
+        incomeScore += (10 - taxRate) * 1.5;
+        if (taxRate < 5) {
+            futureBurden += (5 - taxRate) * 10; // 過度な減税は将来負担増
+            inflationScore += (5 - taxRate) * 0.2; // 円安・インフレ圧力
+        }
 
-main()
-</py-script>
+        // B. 財政出動の影響 (漏出の定理)
+        // 適切な投資は成長を生むが、過剰なバラマキは歪み(中抜き)とインフレを生む
+        if (fiscalLvl === 0) { // 緊縮
+            incomeScore -= 5;
+            inflationScore -= 0.5;
+        } else if (fiscalLvl === 1) { // バランス
+            incomeScore += 5;
+        } else if (fiscalLvl === 2) { // 積極 (投資)
+            incomeScore += 15;
+            inflationScore += 0.5;
+            distortionScore += 0.1; // 少し歪む
+        } else if (fiscalLvl === 3) { // 異次元 (バラマキ)
+            incomeScore += 20; // 一時的には増える
+            inflationScore += 3.0; // 悪性インフレ
+            distortionScore += 0.5; // 激しい中抜き・漏出
+            futureBurden += 50;
+        }
+
+        // C. 社会保障・壁の影響
+        if (socialWall === 'reform_high') { // 178万円の壁 (国民民主)
+            incomeScore += 25; // 手取り激増
+            futureBurden += 20; // 財源必要
+        } else if (socialWall === 'system_opt') { // システム最適化 (チームみらい)
+            incomeScore += 15; // 手取り増
+            distortionScore -= 0.3; // 歪みが解消される（効率化）
+        } else if (socialWall === 'reform_mid') { // 給付付き税額控除 (中道)
+            incomeScore += 10; // 低所得者には恩恵
+            distortionScore += 0.1; // 事務コスト増
+        }
+
+        // D. エネルギー・防衛の影響
+        if (energy === 'tech') { // 技術投資 (みらい)
+            futureBurden += 10; // 先行投資
+            // 長期的にはプラスだが5年ではコスト
+        } else if (energy === 'renew' && taxRate < 5) { // 再エネ+減税 (共産・れいわ)
+            inflationScore += 2.0; // コストプッシュインフレ
+        }
+
+        // 最終計算
+        // 歪みが大きいと、手取り増の効果が減殺される (漏出)
+        const finalIncome = baseIncome + (incomeScore / distortionScore) - (inflationScore * 5);
+        const finalInflation = baseInflation + inflationScore;
+        const finalDistortion = distortionScore;
+
+        // 3. 政党マッチングロジック (重み付け距離計算)
+        // 各党の特徴ベクトル [消費税, 財政, 壁対策, 防衛, エネルギー]
+        // ※簡易化のため、if文で特徴的なパターンを検出
+
+        let bestMatch = "該当なし";
+        let partyColor = "#7f8c8d";
+        let partyDesc = "独自の政策ミックスです。";
+        let matchScore = 0;
+
+        // 🔴 自民・維新 (改憲・成長・原発)
+        if (fiscalLvl >= 1 && defense === 'strong' && energy === 'mix') {
+            bestMatch = "🔴 自民・維新 連立政権";
+            partyColor = "#d32f2f";
+            partyDesc = "「強い日本」を目指す安定路線。防衛・成長産業への投資を重視しますが、格差拡大の懸念も。";
+        }
+
+        // 🟡 国民民主党 (手取り増・178万・積極財政)
+        if (socialWall === 'reform_high' && fiscalLvl >= 2 && taxRate <= 5) {
+            bestMatch = "🟡 国民民主党";
+            partyColor = "#fbc02d";
+            partyDesc = "「手取りを増やす」ことに特化。現役世代には最強ですが、財源論での反発が予想されます。";
+        }
+        // 条件緩和版（消費税10%でも壁撤廃なら）
+        else if (socialWall === 'reform_high') {
+             bestMatch = "🟡 国民民主党 (現実路線)";
+             partyColor = "#fbc02d";
+             partyDesc = "壁撤廃を最優先しつつ、消費税は据え置く現実的な国民民主党路線です。";
+        }
+
+        // 🚀 チームみらい (システム最適化・投資・技術)
+        if (socialWall === 'system_opt' && energy === 'tech') {
+            bestMatch = "🚀 チームみらい";
+            partyColor = "#8e44ad";
+            partyDesc = "「仕組みを変える」エンジニアリング的なアプローチ。派手さはないが、行政のムダ（歪み）を最小化し、最も効率よく手取りを増やします。";
+        }
+
+        // 🔵 中道改革連合 (立憲・公明) (給付・再エネ・対話)
+        if (socialWall === 'reform_mid' && defense === 'peace') {
+            bestMatch = "🔵 中道改革連合 (立憲・公明)";
+            partyColor = "#1976d2";
+            partyDesc = "分配と福祉を重視。「人への投資」を掲げますが、現役世代の負担感は残る可能性があります。";
+        }
+
+        // 🟣 共産・れいわ (消費税廃止・反緊縮)
+        if (taxRate === 0 && fiscalLvl === 3) {
+            bestMatch = "🟣 野党共闘 (共産・れいわ)";
+            partyColor = "#880e4f";
+            partyDesc = "消費税廃止と徹底的な財政出動。短期的には楽になりますが、SBCM理論上は「熱的死（ハイパーインフレ）」のリスクが最大です。";
+        }
+
+        // 4. チャート描画
+        const ctx = document.getElementById('resultChart').getContext('2d');
+        if (myChart) myChart.destroy();
+
+        // 基準(2025)との比較
+        const dataIncome = Math.round(finalIncome);
+        const dataInf = finalInflation.toFixed(1);
+        const dataDist = finalDistortion.toFixed(2);
+
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['手取り(年収)', 'インフレ率', '行政のムダ(歪み)'],
+                datasets: [{
+                    label: '予測値',
+                    data: [dataIncome/baseIncome*100, (dataInf/baseInflation)*100, dataDist*100],
+                    backgroundColor: [
+                        dataIncome >= baseIncome ? '#2ecc71' : '#e74c3c',
+                        dataInf > 2.5 ? '#e74c3c' : '#3498db',
+                        dataDist > 1.1 ? '#e74c3c' : '#3498db'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: false, 
+                        min: 50, max: 180,
+                        grid: { color: '#f0f0f0' },
+                        ticks: { display: false } // 目盛り数字は隠す
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let val = context.raw;
+                                if(context.dataIndex===0) return `基準比: ${Math.round(val)}%`;
+                                return `指数: ${Math.round(val)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 5. 結果表示
+        const diff = Math.round(finalIncome - baseIncome);
+        const sign = diff > 0 ? "+" : "";
+        
+        let html = `<h5 style="color:${partyColor}">${bestMatch}</h5>`;
+        html += `<p class="small">${partyDesc}</p>`;
+        html += `<hr>`;
+        html += `<div class="row text-center">`;
+        html += `<div class="col-4"><strong>手取り</strong><br><span class="fs-5">${dataIncome}万</span><br><small class="${diff>0?'text-success':'text-danger'}">(${sign}${diff})</small></div>`;
+        html += `<div class="col-4"><strong>インフレ</strong><br><span class="fs-5">${dataInf}%</span></div>`;
+        html += `<div class="col-4"><strong>歪み指数</strong><br><span class="fs-5">${dataDist}</span></div>`;
+        html += `</div>`;
+
+        // SBCM警告メッセージ
+        if(finalDistortion > 1.2) {
+            html += `<div class="mt-3 p-2 bg-warning bg-opacity-25 rounded small text-dark">⚠️ <strong>SBCM警告:</strong> バラマキにより「歪み」が増大しています。地方への投資効率が悪化し、資金が漏出しています。</div>`;
+        } else if (finalDistortion < 0.9) {
+            html += `<div class="mt-3 p-2 bg-success bg-opacity-25 rounded small text-dark">✅ <strong>SBCM評価:</strong> システム最適化により「歪み」が解消されています。効率的な経済循環が期待できます。</div>`;
+        }
+
+        document.getElementById("result-text").innerHTML = html;
+
+        // Twitterリンク
+        const tweetText = `私の政策シミュレーション結果：\n【${bestMatch}】\n💰手取り：${dataIncome}万円 (${sign}${diff})\n📈インフレ：${dataInf}%\n🤖歪み指数：${dataDist}\n\n#2026衆院選 #SBCMシミュレーター`;
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+        const btn = document.getElementById("twitter-share");
+        btn.href = url;
+        btn.classList.remove("disabled", "btn-dark");
+        btn.classList.add("btn-primary");
+    }
+</script>
 
 </body>
 </html>
