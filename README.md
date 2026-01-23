@@ -9,6 +9,10 @@
 > **"Don't vote on slogans. Vote on physics."**
 > （スローガンで選ぶな。物理法則で選べ。）
 
+|メイン画面|衆議院2026時点の政策要約|
+|---|---|
+|![](https://github.com/SBCM-Alliance/Political-party-matching-style-simulator/blob/main/images/PS_001.png)|![](https://github.com/SBCM-Alliance/Political-party-matching-style-simulator/blob/main/images/PS_002.png)|
+
 ## 📖 Overview
 
 これは従来の「政党マッチング」ではありません。**「政策熱力学シミュレーター」**です。
