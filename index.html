@@ -16,8 +16,17 @@
     .simulator-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 20px; transition: transform 0.2s; }
     .result-box { background: #e8f5e9; color: #2e7d32; padding: 20px; border-radius: 8px; margin-top: 15px; border-left: 5px solid #2ecc71; }
     .param-label { font-weight: bold; color: #444; font-size: 0.95rem; }
-    .party-tag { font-size: 0.8em; padding: 3px 8px; border-radius: 4px; color: white; margin-right: 5px; display: inline-block; }
     
+    /* 各勢力の比較カード（スマホ対応） */
+    .policy-guide { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+    .policy-card { border: 1px solid #ddd; border-radius: 10px; padding: 12px; background: #fff; }
+    .card-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .party-name { font-weight: bold; font-size: 1rem; }
+    .policy-link { font-size: 0.75rem; text-decoration: none; color: #1a237e; border: 1px solid #1a237e; padding: 2px 8px; border-radius: 4px; }
+    .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem; border-top: 1px solid #eee; pt: 8px; }
+    .pros { color: #2e7d32; border-right: 1px solid #eee; padding-right: 5px; }
+    .cons { color: #d32f2f; padding-left: 5px; }
+
     /* 政党カラー */
     .bg-jimin { background-color: #d32f2f; }
     .bg-rikken { background-color: #1976d2; }
@@ -37,14 +46,13 @@
             <small class="opacity-75">物理法則で未来を予測する</small>
         </div>
         <button class="btn btn-sm btn-about" style="border: 1px solid white; color: white;" data-bs-toggle="modal" data-bs-target="#aboutModal">
-            ⓘ 解説
+            ⓘ 解説・各党政策
         </button>
     </div>
 </div>
 
 <div class="container">
     <div class="row">
-        <!-- Input Panel -->
         <div class="col-lg-5 mb-3">
             <div class="simulator-card">
                 <h6 class="mb-4 border-bottom pb-2 fw-bold">🎛️ あなたが望む日本の設計図</h6>
@@ -65,7 +73,7 @@
                     <div class="d-flex justify-content-between small text-muted">
                         <span>緊縮・維持</span>
                         <span id="val_fiscal" class="fw-bold text-primary">現状維持</span>
-                        <span>超積極・発行</span>
+                        <span>積極・発行</span>
                     </div>
                 </div>
 
@@ -77,7 +85,7 @@
                         <option value="reform_high">178万円の壁撤廃 (国民民主)</option>
                         <option value="reform_sanseito">自給自足・子育て月10万 (参政)</option>
                         <option value="reform_reiwa">消費税廃止・再公営化 (れいわ)</option>
-                        <option value="reform_kyosan">内部留保還流・軍縮 (共産)</option>
+                        <option value="reform_kyosan">内部留保還流・賃上げ (共産)</option>
                         <option value="system_opt">システム最適化 (チームみらい)</option>
                     </select>
                 </div>
@@ -90,7 +98,7 @@
                         <input type="radio" class="btn-check" name="defense" id="def_status" value="status" checked>
                         <label class="btn btn-outline-secondary btn-sm" for="def_status">専守防衛</label>
                         <input type="radio" class="btn-check" name="defense" id="def_strong" value="strong">
-                        <label class="btn btn-outline-secondary btn-sm" for="def_strong">独立自尊・強化</label>
+                        <label class="btn btn-outline-secondary btn-sm" for="def_strong">独立・強化</label>
                     </div>
                 </div>
 
@@ -98,29 +106,27 @@
                     <label class="param-label">エネルギー政策</label>
                     <div class="btn-group w-100" role="group">
                         <input type="radio" class="btn-check" name="energy" id="ene_renew" value="renew">
-                        <label class="btn btn-outline-secondary btn-sm" for="ene_renew">再エネ100%</label>
+                        <label class="btn btn-outline-secondary btn-sm" for="ene_renew">再エネ重視</label>
                         <input type="radio" class="btn-check" name="energy" id="ene_mix" value="mix" checked>
                         <label class="btn btn-outline-secondary btn-sm" for="ene_mix">原発・安定</label>
                         <input type="radio" class="btn-check" name="energy" id="ene_tech" value="tech">
-                        <label class="btn btn-outline-secondary btn-sm" for="ene_tech">次世代技術投資</label>
+                        <label class="btn btn-outline-secondary btn-sm" for="ene_tech">次世代投資</label>
                     </div>
                 </div>
 
-                <button onclick="runSimulation()" class="btn btn-primary w-100 fw-bold shadow-sm py-2">
-                    シミュレーション実行 🚀
-                </button>
+                <button onclick="runSimulation()" class="btn btn-primary w-100 fw-bold shadow-sm py-2">シミュレーション実行 🚀</button>
             </div>
         </div>
 
-        <!-- Result Panel -->
         <div class="col-lg-7">
             <div class="simulator-card">
                 <h6 class="mb-3 border-bottom pb-2 fw-bold">📊 5年後の日本経済予測 (SBCM分析)</h6>
                 <div id="chart-container" style="position: relative; height:300px;">
                     <canvas id="resultChart"></canvas>
                 </div>
-                <div id="result-text" class="result-box">
-                    <strong>☝️ 政策を選択して実行してください。</strong>
+                <div id="result-text" class="result-box">☝️ 政策を選択して実行してください。</div>
+                <div class="mt-3 text-end">
+                     <a id="twitter-share" href="#" target="_blank" class="btn btn-sm btn-dark disabled">Twitterでシェア</a>
                 </div>
             </div>
         </div>
@@ -132,17 +138,63 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">各勢力の物理モデル解説</h5>
+                <h5 class="modal-title">各党の政策と物理モデル解説</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body small">
-                <div class="mb-3"><strong>🔴 与党 (自民・維新): 成長投資モデル</strong><br>既存インフラと防衛力を強化。大型予算で回しますが、中央集権的な「漏出」が課題。</div>
-                <div class="mb-3"><strong>🔵 中道改革連合: 低摩擦モデル</strong><br>食料品税ゼロで生活者の摩擦を直接除去。ファンドで財源を調達する広域循環型。</div>
-                <div class="mb-3"><strong>🟡 国民民主党: 高圧経済モデル</strong><br>178万円の壁撤廃で現役世代の電圧を一気に上げ、消費を爆発させます。</div>
-                <div class="mb-3"><strong>🚀 チームみらい: 超伝導モデル</strong><br>デジタルにより「歪み」をゼロ化。効率改善のみで出力を上げるエンジニアリング型。</div>
-                <div class="mb-3"><strong>🟠 参政党: 独立自尊モデル</strong><br>巨大給付と負担率35%を同時に狙う高熱源設計。システムの熱暴走リスク大。</div>
-                <div class="mb-3"><strong>🌸 れいわ新選組: 超高圧・公共断熱モデル</strong><br>通貨発行権をブースターにし、インフラを再公営化。地域保持率（Rblock）を物理的に固定して流出を防ぎます。</div>
-                <div class="mb-3"><strong>🚩 日本共産党: 流束是正モデル</strong><br>内部留保課税によりエネルギーを富裕層から生活者へ強制還流。軍縮により行政の歪みを是正。</div>
+            <div class="modal-body small bg-light">
+                <p>政策を「思想」ではなく社会OSを動かすための「物理パラメータ」として演算します。</p>
+                
+                <div class="policy-guide">
+                    <div class="policy-card" style="border-left: 6px solid #d32f2f;">
+                        <div class="card-header-top"><span class="party-name">🔴 与党 (自民・維新)</span><a href="https://www.jimin.jp/news/policy/212294.html" target="_blank" class="policy-link">基本政策 ↗</a></div>
+                        <div class="pros-cons">
+                            <div class="pros"><strong>＋ 良い点</strong><br>防衛や先端技術へ投資し、国としての強さを維持。</div>
+                            <div class="cons"><strong>－ リスク</strong><br>中抜きや都心集中が続き、地方にお金が回りにくい。</div>
+                        </div>
+                    </div>
+                    <div class="policy-card" style="border-left: 6px solid #1976d2;">
+                        <div class="card-header-top"><span class="party-name">🔵 中道改革連合</span><a href="https://craj.jp/party/policies/" target="_blank" class="policy-link">基本政策 ↗</a></div>
+                        <div class="pros-cons">
+                            <div class="pros"><strong>＋ 良い点</strong><br>食品税ゼロ・社保減。投資の儲けを家計に還元。</div>
+                            <div class="cons"><strong>－ リスク</strong><br>運用の失敗で将来の予算が不足する可能性。</div>
+                        </div>
+                    </div>
+                    <div class="policy-card" style="border-left: 6px solid #fbc02d;">
+                        <div class="card-header-top"><span class="party-name">🟡 国民民主党</span><a href="https://new-kokumin.jp/policies" target="_blank" class="policy-link">基本政策 ↗</a></div>
+                        <div class="pros-cons">
+                            <div class="pros"><strong>＋ 良い点</strong><br>178万円の壁を壊し、働く人の現金を一気に増やす。</div>
+                            <div class="cons"><strong>－ リスク</strong><br>大規模減税に対し、具体的な穴埋めが困難。</div>
+                        </div>
+                    </div>
+                    <div class="policy-card" style="border-left: 6px solid #8e44ad;">
+                        <div class="card-header-top"><span class="party-name">🚀 チームみらい</span><a href="https://team-mir.ai/election/shugiin-2026" target="_blank" class="policy-link">基本政策 ↗</a></div>
+                        <div class="pros-cons">
+                            <div class="pros"><strong>＋ 良い点</strong><br>デジタルで中抜きを排除。効率だけで豊かにする。</div>
+                            <div class="cons"><strong>－ リスク</strong><br>バラマキがないため、実感が遅いエンジニア型。</div>
+                        </div>
+                    </div>
+                    <div class="policy-card" style="border-left: 6px solid #ff8c00;">
+                        <div class="card-header-top"><span class="party-name">🟠 参政党</span><a href="https://sanseito.jp/political_measures_2025/specific_policies/" target="_blank" class="policy-link">基本政策 ↗</a></div>
+                        <div class="pros-cons">
+                            <div class="pros"><strong>＋ 良い点</strong><br>月10万の子育て給付と食の安全。理想的な自立。</div>
+                            <div class="cons"><strong>－ リスク</strong><br>莫大なお金を配るため、猛烈な物価高を招く。</div>
+                        </div>
+                    </div>
+                    <div class="policy-card" style="border-left: 6px solid #ff0055;">
+                        <div class="card-header-top"><span class="party-name">🌸 れいわ新選組</span><a href="https://reiwa-shinsengumi.com/policy/" target="_blank" class="policy-link">基本政策 ↗</a></div>
+                        <div class="pros-cons">
+                            <div class="pros"><strong>＋ 良い点</strong><br>消費税廃止とインフラ国営化。公共の力で底上げ。</div>
+                            <div class="cons"><strong>－ リスク</strong><br>通貨発行過多で経済がパンク。激しいインフレ。</div>
+                        </div>
+                    </div>
+                    <div class="policy-card" style="border-left: 6px solid #cc0000;">
+                        <div class="card-header-top"><span class="party-name">🚩 日本共産党</span><a href="https://www.jcp.or.jp/web_policy/16323.html#top" target="_blank" class="policy-link">基本政策 ↗</a></div>
+                        <div class="pros-cons">
+                            <div class="pros"><strong>＋ 良い点</strong><br>大企業の利益を回収し、賃上げや福祉、軍縮へ。</div>
+                            <div class="cons"><strong>－ リスク</strong><br>規制強化により企業の元気がなくなり経済停滞。</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -168,41 +220,35 @@
         const baseIncome = 460; const baseInflation = 1.5; 
         let incomeScore = 0; let inflationScore = 0; let distortionScore = 1.0; let futureBurden = 0; 
 
-        // ロジック演算
+        // ロジック演算 (SBCM物理エンジン)
         incomeScore += (10 - taxRate) * 2.0;
         if (taxRate < 5) { futureBurden += (5 - taxRate) * 15; inflationScore += (5 - taxRate) * 0.4; }
-
-        if (fiscalLvl === 3) { incomeScore += 35; inflationScore += 3.0; distortionScore += 0.4; futureBurden += 50; }
+        if (fiscalLvl === 3) { incomeScore += 35; inflationScore += 3.0; distortionScore += 0.45; futureBurden += 50; }
         else if (fiscalLvl === 2) { incomeScore += 15; futureBurden += 10; }
 
-        if (socialWall === 'reform_reiwa') { incomeScore += 40; distortionScore -= 0.05; futureBurden += 40; inflationScore += 0.8; }
+        if (socialWall === 'reform_reiwa') { incomeScore += 42; distortionScore -= 0.05; futureBurden += 45; inflationScore += 0.9; }
         else if (socialWall === 'reform_kyosan') { incomeScore += 30; distortionScore -= 0.15; futureBurden += 15; }
-        else if (socialWall === 'reform_centrist') { incomeScore += 18; distortionScore -= 0.1; }
-        else if (socialWall === 'reform_high') { incomeScore += 25; futureBurden += 20; }
-        else if (socialWall === 'system_opt') { incomeScore += 15; distortionScore -= 0.3; }
+        else if (socialWall === 'reform_centrist') { incomeScore += 18; distortionScore -= 0.12; }
+        else if (socialWall === 'reform_high') { incomeScore += 25; futureBurden += 22; }
+        else if (socialWall === 'reform_sanseito') { incomeScore += 45; distortionScore += 0.2; futureBurden += 55; inflationScore += 1.2; }
+        else if (socialWall === 'system_opt') { incomeScore += 15; distortionScore -= 0.35; }
 
         if (defense === 'strong') futureBurden += 15;
-        if (defense === 'peace') distortionScore -= 0.1; // 軍縮による歪み減少
+        if (defense === 'peace') distortionScore -= 0.1;
 
         const finalIncome = baseIncome + (incomeScore / distortionScore) - (inflationScore * 8);
         const finalInflation = baseInflation + inflationScore;
         const finalDistortion = distortionScore;
 
         // マッチング
-        let match = { name: "該当なし", color: "#7f8c8d", desc: "独自の政策です。" };
-        if (socialWall === 'reform_reiwa' || (taxRate === 0 && fiscalLvl === 3)) {
-            match = { name: "🌸 れいわ新選組", color: "#ff0055", desc: "通貨発行を原資に社会を再公営化。手取り増は最大級ですが、インフレ制御が鍵となります。" };
-        } else if (socialWall === 'reform_kyosan' || (defense === 'peace' && fiscalLvl >= 2)) {
-            match = { name: "🚩 日本共産党", color: "#cc0000", desc: "内部留保の還流と軍縮を断行。歪みを正して生活者にエネルギーを戻す還流モデルです。" };
-        } else if (socialWall === 'reform_centrist') {
-            match = { name: "🔵 中道改革連合", color: "#1976d2", desc: "食料品税ゼロと社保減で抵抗を除去。現実的かつ広範な支援を目指す循環型。" };
-        } else if (socialWall === 'reform_high') {
-            match = { name: "🟡 国民民主党", color: "#fbc02d", desc: "手取り最大化。基礎控除引き上げで現役の電圧を一気に高めるブースター型。" };
-        } else if (socialWall === 'system_opt') {
-            match = { name: "🚀 チームみらい", color: "#8e44ad", desc: "歪みをゼロにする超伝導統治。追加コストなしで出力を上げるエンジニアリング型。" };
-        } else if (defense === 'strong' && fiscalLvl >= 1) {
-            match = { name: "🔴 自民・維新", color: "#d32f2f", desc: "成長と防衛の投資路線。安定感はありますが中抜きによる熱損失が課題。" };
-        }
+        let match = { name: "独自のミックス", color: "#7f8c8d", desc: "思想に捉われない独自の回路設計です。" };
+        if (socialWall === 'reform_sanseito') { match = { name: "🟠 参政党", color: "#ff8c00", desc: "巨大給付の独立自尊モデル。手取りは増えますが物価高リスク最大。"}; }
+        else if (socialWall === 'reform_reiwa') { match = { name: "🌸 れいわ新選組", color: "#ff0055", desc: "通貨発行による公共再生モデル。インフレ抑制が成功の鍵。" }; }
+        else if (socialWall === 'reform_kyosan') { match = { name: "🚩 日本共産党", color: "#cc0000", desc: "内部留保の還流と軍縮。歪みを正して生活者に還元するモデル。" }; }
+        else if (socialWall === 'reform_centrist') { match = { name: "🔵 中道改革連合", color: "#1976d2", desc: "食料品税ゼロ・社保減。家計の摩擦を減らす広域循環型。" }; }
+        else if (socialWall === 'reform_high') { match = { name: "🟡 国民民主党", color: "#fbc02d", desc: "所得税減税による手取り最大化。現役世代の電圧を一気に上げます。" }; }
+        else if (socialWall === 'system_opt') { match = { name: "🚀 チームみらい", color: "#8e44ad", desc: "中抜きを排除する超伝導統治。効率化のみで出力を上げる特化型。" }; }
+        else if (defense === 'strong' && fiscalLvl >= 1) { match = { name: "🔴 与党 (自民・維新)", color: "#d32f2f", desc: "安定・防衛重視路線。既存インフラ強化と成長投資を優先。" }; }
 
         // 描画
         const ctx = document.getElementById('resultChart').getContext('2d');
@@ -213,13 +259,16 @@
                 labels: ['実質手取り', 'インフレ率', '行政の歪み'],
                 datasets: [{
                     data: [Math.round(finalIncome)/baseIncome*100, (finalInflation/baseInflation)*100, finalDistortion*100],
-                    backgroundColor: [finalIncome >= baseIncome ? '#2ecc71' : '#e74c3c', finalInflation > 4.0 ? '#e74c3c' : '#3498db', finalDistortion > 1.2 ? '#e74c3c' : '#3498db']
+                    backgroundColor: [finalIncome >= baseIncome ? '#2ecc71' : '#e74c3c', finalInflation > 4.5 ? '#e74c3c' : '#3498db', finalDistortion > 1.25 ? '#e74c3c' : '#3498db']
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 20, max: 200, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: -100, max: 200, ticks: { display: false } } }, plugins: { legend: { display: false } } }
         });
 
         document.getElementById("result-text").innerHTML = `<h5 style="color:${match.color}">${match.name}</h5><p class="small">${match.desc}</p><hr><div class="row text-center"><div class="col-4">手取り<br><span class="fs-5">${Math.round(finalIncome)}万</span></div><div class="col-4">インフレ<br><span class="fs-5">${finalInflation.toFixed(1)}%</span></div><div class="col-4">歪み指数<br><span class="fs-5">${finalDistortion.toFixed(2)}</span></div></div>`;
+        const tweetText = `私のシミュレーション結果：【${match.name}】💰手取り：${Math.round(finalIncome)}万円 📈インフレ：${finalInflation.toFixed(1)}% #2026衆院選 #SBCMシミュレーター`;
+        document.getElementById("twitter-share").href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+        document.getElementById("twitter-share").classList.remove("disabled");
     }
 </script>
 </body>
