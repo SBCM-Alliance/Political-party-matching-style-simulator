@@ -52,7 +52,7 @@
                 
                 <!-- 消費税 -->
                 <div class="mb-4">
-                    <label class="param-label">消費税率</label>
+                    <label class="param-label">消費税率（生活必需品を含む）</label>
                     <input type="range" class="form-range" id="tax_rate" min="0" max="15" value="10" step="1" oninput="updateVal('val_tax', this.value, '%')">
                     <div class="d-flex justify-content-between small text-muted">
                         <span>廃止 (0%)</span>
@@ -63,24 +63,24 @@
 
                 <!-- 財政出動 -->
                 <div class="mb-4">
-                    <label class="param-label">財政出動の規模と質</label>
+                    <label class="param-label">投資の規模と財源戦略</label>
                     <input type="range" class="form-range" id="fiscal_spend" min="0" max="3" value="1" step="1" oninput="updateFiscalLabel(this.value)">
                     <div class="d-flex justify-content-between small text-muted">
                         <span>緊縮・維持</span>
                         <span id="val_fiscal" class="fw-bold text-primary">現状維持</span>
-                        <span>超積極</span>
+                        <span>積極投資</span>
                     </div>
                     <small id="fiscal_desc" class="d-block mt-1 text-secondary" style="font-size:0.8em">バランス重視の予算配分</small>
                 </div>
 
-                <!-- 社会保障・壁 -->
+                <!-- 社会保障・分配 -->
                 <div class="mb-4">
-                    <label class="param-label">社会保障と「年収の壁」</label>
+                    <label class="param-label">社会保障・分配の仕組み</label>
                     <select class="form-select form-select-sm" id="social_wall">
-                        <option value="keep">現状維持 (103万円の壁あり)</option>
-                        <option value="reform_mid">給付付き税額控除 (低所得者支援)</option>
-                        <option value="reform_high">壁の撤廃 (基礎控除178万円へ)</option>
-                        <option value="system_opt">システム最適化 (なめらかな負担増)</option>
+                        <option value="keep">現状維持 (既存の社会保障)</option>
+                        <option value="reform_centrist">食料品税ゼロ・社保減 (中道改革)</option>
+                        <option value="reform_high">178万円の壁撤廃 (国民民主)</option>
+                        <option value="system_opt">システム最適化 (チームみらい)</option>
                     </select>
                 </div>
 
@@ -89,7 +89,7 @@
                     <label class="param-label">防衛・外交スタンス</label>
                     <div class="btn-group w-100" role="group">
                         <input type="radio" class="btn-check" name="defense" id="def_peace" value="peace">
-                        <label class="btn btn-outline-secondary btn-sm" for="def_peace">対話・軍縮</label>
+                        <label class="btn btn-outline-secondary btn-sm" for="def_peace">対話・現実外交</label>
 
                         <input type="radio" class="btn-check" name="defense" id="def_status" value="status" checked>
                         <label class="btn btn-outline-secondary btn-sm" for="def_status">専守防衛</label>
@@ -104,13 +104,13 @@
                     <label class="param-label">エネルギー政策</label>
                     <div class="btn-group w-100" role="group">
                         <input type="radio" class="btn-check" name="energy" id="ene_renew" value="renew">
-                        <label class="btn btn-outline-secondary btn-sm" for="ene_renew">再エネ/脱原発</label>
+                        <label class="btn btn-outline-secondary btn-sm" for="ene_renew">再エネ・脱原発</label>
 
                         <input type="radio" class="btn-check" name="energy" id="ene_mix" value="mix" checked>
-                        <label class="btn btn-outline-secondary btn-sm" for="ene_mix">現実路線(原発)</label>
+                        <label class="btn btn-outline-secondary btn-sm" for="ene_mix">原発再稼働・安定</label>
                         
                         <input type="radio" class="btn-check" name="energy" id="ene_tech" value="tech">
-                        <label class="btn btn-outline-secondary btn-sm" for="ene_tech">技術投資(核融合等)</label>
+                        <label class="btn btn-outline-secondary btn-sm" for="ene_tech">次世代技術投資</label>
                     </div>
                 </div>
 
@@ -129,8 +129,8 @@
                 </div>
                 
                 <div id="result-text" class="result-box">
-                    <strong>☝️ 上のパネルで政策を選んでください。</strong><br>
-                    あなたの選択がどの政党の公約に近いか、そしてそれが物理的（熱力学的）に日本経済にどのような影響を与えるかを計算します。
+                    <strong>☝️ 政策を選択して実行してください。</strong><br>
+                    「ジャパン・ファンド」や「食料品税ゼロ」などの最新政策が、家計の「保持率」にどう影響するか計算します。
                 </div>
                 
                 <div class="mt-3 text-end">
@@ -148,19 +148,16 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">SBCM理論について</h5>
+                <h5 class="modal-title">SBCM理論：改定ノート</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body small">
-                <p>このシミュレーターは、<strong>「SBCM（標準ブロック比較法）」</strong>という統治工学理論に基づいています。</p>
-                <p>政策を「思想」ではなく、以下の物理パラメータとして扱います。</p>
+                <p><strong>最新の改定：</strong>中道改革連合の「食料品消費税ゼロ」と「社会保険料低減」を物理モデルに組み込みました。</p>
                 <ul>
-                    <li><strong>入力 (Input):</strong> 予算や税制（エネルギー注入）</li>
-                    <li><strong>効率 (Efficiency):</strong> システムの歪みや中抜き（熱損失）</li>
-                    <li><strong>出力 (Output):</strong> 実質手取りやインフレ率（仕事量）</li>
+                    <li><strong>食料品税ゼロ:</strong> 基礎的消費における抵抗（摩擦）を直接除去するため、低所得層のエネルギー保持率を劇的に改善します。</li>
+                    <li><strong>ジャパン・ファンド:</strong> 外部からのエネルギー（運用益）を取り込むことで、増税という「痛み」なしに入力を増やす回路として機能します。</li>
                 </ul>
-                <p>「聞こえの良い政策」が必ずしも「良い結果」を生まないことを、物理法則（痛みの保存則、漏出の定理）を用いて可視化します。</p>
-                <a href="https://github.com/SBCM-Alliance" target="_blank">GitHub: SBCM-Alliance</a>
+                <p>SBCM（標準ブロック比較法）は、特定の思想ではなく「熱力学的な持続可能性」で政策を評価します。</p>
             </div>
         </div>
     </div>
@@ -174,142 +171,119 @@
     }
 
     function updateFiscalLabel(val) {
-        const labels = ["緊縮・維持", "バランス型", "積極財政", "異次元緩和"];
+        const labels = ["緊縮・維持", "バランス投資", "政府系ファンド活用", "積極財政"];
         const descs = [
             "現状維持。財政規律を重視。",
-            "必要な分野に絞って投資。",
-            "国債発行で成長分野へ投資。",
-            "給付金や公共事業を大量投入。"
+            "インフラ更新・防災へ重点投資。",
+            "ジャパン・ファンド等の運用益を原資に投資。",
+            "国債発行による大規模な産業支援。"
         ];
         document.getElementById("val_fiscal").innerText = labels[val];
         document.getElementById("fiscal_desc").innerText = descs[val];
     }
 
     function runSimulation() {
-        // 1. パラメータ取得
         const taxRate = parseFloat(document.getElementById("tax_rate").value);
-        const fiscalLvl = parseInt(document.getElementById("fiscal_spend").value); // 0-3
+        const fiscalLvl = parseInt(document.getElementById("fiscal_spend").value);
         const socialWall = document.getElementById("social_wall").value;
         const defense = document.querySelector('input[name="defense"]:checked').value;
         const energy = document.querySelector('input[name="energy"]:checked').value;
 
-        // 2. 物理計算エンジン (SBCM Logic)
-        // 基準値 (2025年想定)
-        const baseIncome = 460; // 万円
-        const baseInflation = 1.5; // %
+        const baseIncome = 460; 
+        const baseInflation = 1.5; 
         
-        let incomeScore = 0; // 手取り変化
-        let inflationScore = 0; // インフレ圧力
-        let distortionScore = 1.0; // 行政の歪み（1.0が基準、高いほど無駄が多い）
-        let futureBurden = 0; // 将来世代へのツケ
+        let incomeScore = 0; 
+        let inflationScore = 0; 
+        let distortionScore = 1.0; 
+        let futureBurden = 0; 
 
         // A. 税制の影響 (痛みの保存則)
-        // 消費税減税は手取り増だが、財源不足なら将来負担増かインフレ
         incomeScore += (10 - taxRate) * 1.5;
         if (taxRate < 5) {
-            futureBurden += (5 - taxRate) * 10; // 過度な減税は将来負担増
-            inflationScore += (5 - taxRate) * 0.2; // 円安・インフレ圧力
+            futureBurden += (5 - taxRate) * 12; 
+            inflationScore += (5 - taxRate) * 0.25; 
         }
 
         // B. 財政出動の影響 (漏出の定理)
-        // 適切な投資は成長を生むが、過剰なバラマキは歪み(中抜き)とインフレを生む
-        if (fiscalLvl === 0) { // 緊縮
+        if (fiscalLvl === 0) { 
             incomeScore -= 5;
             inflationScore -= 0.5;
-        } else if (fiscalLvl === 1) { // バランス
+        } else if (fiscalLvl === 1) { 
             incomeScore += 5;
-        } else if (fiscalLvl === 2) { // 積極 (投資)
-            incomeScore += 15;
-            inflationScore += 0.5;
-            distortionScore += 0.1; // 少し歪む
-        } else if (fiscalLvl === 3) { // 異次元 (バラマキ)
-            incomeScore += 20; // 一時的には増える
-            inflationScore += 3.0; // 悪性インフレ
-            distortionScore += 0.5; // 激しい中抜き・漏出
-            futureBurden += 50;
+            futureBurden += 5;
+        } else if (fiscalLvl === 2) { // ジャパン・ファンド活用
+            incomeScore += 12;
+            futureBurden += 2; // 運用益活用のため国債依存が低い
+            distortionScore += 0.05; 
+        } else if (fiscalLvl === 3) { 
+            incomeScore += 18;
+            inflationScore += 2.5;
+            distortionScore += 0.4;
+            futureBurden += 40;
         }
 
-        // C. 社会保障・壁の影響
-        if (socialWall === 'reform_high') { // 178万円の壁 (国民民主)
-            incomeScore += 25; // 手取り激増
-            futureBurden += 20; // 財源必要
-        } else if (socialWall === 'system_opt') { // システム最適化 (チームみらい)
-            incomeScore += 15; // 手取り増
-            distortionScore -= 0.3; // 歪みが解消される（効率化）
-        } else if (socialWall === 'reform_mid') { // 給付付き税額控除 (中道)
-            incomeScore += 10; // 低所得者には恩恵
-            distortionScore += 0.1; // 事務コスト増
+        // C. 社会保障・中道改革の新ロジック反映
+        if (socialWall === 'reform_high') { 
+            incomeScore += 25; 
+            futureBurden += 20; 
+        } else if (socialWall === 'reform_centrist') { // 中道改革: 食料品ゼロ・社保減
+            incomeScore += 18; // 実質手取りの直接的向上
+            distortionScore -= 0.1; // 複雑な給付事務より税率ゼロの方が摩擦が少ない
+            futureBurden += 8; // 社保減収分。ファンドで補填する想定
+        } else if (socialWall === 'system_opt') { 
+            incomeScore += 15; 
+            distortionScore -= 0.3; 
         }
 
-        // D. エネルギー・防衛の影響
-        if (energy === 'tech') { // 技術投資 (みらい)
-            futureBurden += 10; // 先行投資
-            // 長期的にはプラスだが5年ではコスト
-        } else if (energy === 'renew' && taxRate < 5) { // 再エネ+減税 (共産・れいわ)
-            inflationScore += 2.0; // コストプッシュインフレ
-        }
+        // D. 外交・エネルギー
+        if (defense === 'strong') futureBurden += 10;
+        if (energy === 'tech') futureBurden += 5;
 
         // 最終計算
-        // 歪みが大きいと、手取り増の効果が減殺される (漏出)
-        const finalIncome = baseIncome + (incomeScore / distortionScore) - (inflationScore * 5);
+        const finalIncome = baseIncome + (incomeScore / distortionScore) - (inflationScore * 6);
         const finalInflation = baseInflation + inflationScore;
         const finalDistortion = distortionScore;
 
-        // 3. 政党マッチングロジック (重み付け距離計算)
-        // 各党の特徴ベクトル [消費税, 財政, 壁対策, 防衛, エネルギー]
-        // ※簡易化のため、if文で特徴的なパターンを検出
-
+        // 3. 政党マッチングロジック
         let bestMatch = "該当なし";
         let partyColor = "#7f8c8d";
         let partyDesc = "独自の政策ミックスです。";
-        let matchScore = 0;
 
-        // 🔴 自民・維新 (改憲・成長・原発)
-        if (fiscalLvl >= 1 && defense === 'strong' && energy === 'mix') {
+        // 🔵 中道改革連合 (食料品ゼロ・社保減・ファンド)
+        if (socialWall === 'reform_centrist' || (taxRate <= 10 && fiscalLvl === 2)) {
+            bestMatch = "🔵 中道改革連合 (立憲・公明等)";
+            partyColor = "#1976d2";
+            partyDesc = "「食料品税ゼロ」と「社保減」で現役・生活者を直接支援。ジャパン・ファンドで将来負担を抑えつつ、広域での経済循環を目指す低摩擦モデルです。";
+        }
+        // 🔴 与党 (自民・維新)
+        else if (defense === 'strong' && energy === 'mix' && fiscalLvl >= 1) {
             bestMatch = "🔴 自民・維新 連立政権";
             partyColor = "#d32f2f";
-            partyDesc = "「強い日本」を目指す安定路線。防衛・成長産業への投資を重視しますが、格差拡大の懸念も。";
+            partyDesc = "「強い日本」を掲げる安定・防衛重視路線。既存インフラの強化と成長投資を優先しますが、中央集権的な漏出リスクは残ります。";
         }
-
-        // 🟡 国民民主党 (手取り増・178万・積極財政)
-        if (socialWall === 'reform_high' && fiscalLvl >= 2 && taxRate <= 5) {
+        // 🟡 国民民主党
+        else if (socialWall === 'reform_high') {
             bestMatch = "🟡 国民民主党";
             partyColor = "#fbc02d";
-            partyDesc = "「手取りを増やす」ことに特化。現役世代には最強ですが、財源論での反発が予想されます。";
+            partyDesc = "「手取り最大化」を最優先。基礎控除引き上げで現役世代の電圧を一気に上げますが、財政的なインピーダンス（抵抗）への対策が課題です。";
         }
-        // 条件緩和版（消費税10%でも壁撤廃なら）
-        else if (socialWall === 'reform_high') {
-             bestMatch = "🟡 国民民主党 (現実路線)";
-             partyColor = "#fbc02d";
-             partyDesc = "壁撤廃を最優先しつつ、消費税は据え置く現実的な国民民主党路線です。";
-        }
-
-        // 🚀 チームみらい (システム最適化・投資・技術)
-        if (socialWall === 'system_opt' && energy === 'tech') {
+        // 🚀 チームみらい
+        else if (socialWall === 'system_opt') {
             bestMatch = "🚀 チームみらい";
             partyColor = "#8e44ad";
-            partyDesc = "「仕組みを変える」エンジニアリング的なアプローチ。派手さはないが、行政のムダ（歪み）を最小化し、最も効率よく手取りを増やします。";
+            partyDesc = "システムの根本修理。デジタルによる中抜き排除で、追加予算なしで実質出力を最大化する「超伝導」統治モデルです。";
         }
-
-        // 🔵 中道改革連合 (立憲・公明) (給付・再エネ・対話)
-        if (socialWall === 'reform_mid' && defense === 'peace') {
-            bestMatch = "🔵 中道改革連合 (立憲・公明)";
-            partyColor = "#1976d2";
-            partyDesc = "分配と福祉を重視。「人への投資」を掲げますが、現役世代の負担感は残る可能性があります。";
-        }
-
-        // 🟣 共産・れいわ (消費税廃止・反緊縮)
-        if (taxRate === 0 && fiscalLvl === 3) {
+        // 🟣 共産・れいわ
+        else if (taxRate <= 5 && fiscalLvl === 3) {
             bestMatch = "🟣 野党共闘 (共産・れいわ)";
             partyColor = "#880e4f";
-            partyDesc = "消費税廃止と徹底的な財政出動。短期的には楽になりますが、SBCM理論上は「熱的死（ハイパーインフレ）」のリスクが最大です。";
+            partyDesc = "消費税の大幅減税と国債による大規模給付。短期的エネルギーは最大ですが、制御不能なインフレ（熱的死）の懸念が物理的に指摘されます。";
         }
 
         // 4. チャート描画
         const ctx = document.getElementById('resultChart').getContext('2d');
         if (myChart) myChart.destroy();
 
-        // 基準(2025)との比較
         const dataIncome = Math.round(finalIncome);
         const dataInf = finalInflation.toFixed(1);
         const dataDist = finalDistortion.toFixed(2);
@@ -317,41 +291,22 @@
         myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['手取り(年収)', 'インフレ率', '行政のムダ(歪み)'],
+                labels: ['実質手取り(年収)', 'インフレ率', '行政の歪み(熱損失)'],
                 datasets: [{
                     label: '予測値',
                     data: [dataIncome/baseIncome*100, (dataInf/baseInflation)*100, dataDist*100],
                     backgroundColor: [
                         dataIncome >= baseIncome ? '#2ecc71' : '#e74c3c',
-                        dataInf > 2.5 ? '#e74c3c' : '#3498db',
-                        dataDist > 1.1 ? '#e74c3c' : '#3498db'
+                        dataInf > 3.0 ? '#e74c3c' : '#3498db',
+                        dataDist > 1.15 ? '#e74c3c' : '#3498db'
                     ],
                     borderWidth: 1
                 }]
             },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { 
-                        beginAtZero: false, 
-                        min: 50, max: 180,
-                        grid: { color: '#f0f0f0' },
-                        ticks: { display: false } // 目盛り数字は隠す
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let val = context.raw;
-                                if(context.dataIndex===0) return `基準比: ${Math.round(val)}%`;
-                                return `指数: ${Math.round(val)}`;
-                            }
-                        }
-                    }
-                }
+                responsive: true, maintainAspectRatio: false,
+                scales: { y: { beginAtZero: false, min: 30, max: 180, ticks: { display: false } } },
+                plugins: { legend: { display: false } }
             }
         });
 
@@ -368,16 +323,14 @@
         html += `<div class="col-4"><strong>歪み指数</strong><br><span class="fs-5">${dataDist}</span></div>`;
         html += `</div>`;
 
-        // SBCM警告メッセージ
-        if(finalDistortion > 1.2) {
-            html += `<div class="mt-3 p-2 bg-warning bg-opacity-25 rounded small text-dark">⚠️ <strong>SBCM警告:</strong> バラマキにより「歪み」が増大しています。地方への投資効率が悪化し、資金が漏出しています。</div>`;
-        } else if (finalDistortion < 0.9) {
-            html += `<div class="mt-3 p-2 bg-success bg-opacity-25 rounded small text-dark">✅ <strong>SBCM評価:</strong> システム最適化により「歪み」が解消されています。効率的な経済循環が期待できます。</div>`;
+        if(finalDistortion < 0.95) {
+            html += `<div class="mt-3 p-2 bg-success bg-opacity-25 rounded small text-dark">✅ <strong>SBCM評価:</strong> 効率的な「抵抗除去」が行われています。実質的な購買力が維持されやすい構造です。</div>`;
+        } else if(futureBurden > 30) {
+            html += `<div class="mt-3 p-2 bg-danger bg-opacity-25 rounded small text-dark">⚠️ <strong>SBCM警告:</strong> 将来世代へのエントロピー蓄積が深刻です。持続可能性にバグが発生しています。</div>`;
         }
 
         document.getElementById("result-text").innerHTML = html;
 
-        // Twitterリンク
         const tweetText = `私の政策シミュレーション結果：\n【${bestMatch}】\n💰手取り：${dataIncome}万円 (${sign}${diff})\n📈インフレ：${dataInf}%\n🤖歪み指数：${dataDist}\n\n#2026衆院選 #SBCMシミュレーター`;
         const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
         const btn = document.getElementById("twitter-share");
