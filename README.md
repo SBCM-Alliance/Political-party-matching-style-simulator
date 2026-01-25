@@ -68,7 +68,7 @@ GitHub Pages等にホストして利用可能です（URL設定予定）。
 3. インターネット接続が必要です（BootstrapやChart.jsをCDNから読み込むため）。
 
 ```bash
-git clone https://github.com/YourName/Political-party-matching-style-simulator.git
+git clone https://github.com/SBCM-Alliance/Political-party-matching-style-simulator.git
 open index.html
 ```
 
